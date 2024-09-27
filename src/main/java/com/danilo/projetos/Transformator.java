@@ -1,5 +1,6 @@
 package com.danilo.projetos;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 public class Transformator {
@@ -8,10 +9,14 @@ public class Transformator {
             , NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         //Classe que vai ser transformada
         Class<?> source = input.getClass();
-        Class<?> target = source.forName(source.getClass() + "DTO");
+        Class<?> target = Class.forName(source + "DTO");
 
         //busca os construtores em tempo de execuçao
         O targetClass = (O) target.getDeclaredConstructor().newInstance();
+
+        //Pega os campos das classes
+        Field[] sourceCampos = source.getDeclaredFields();
+        Field[] targetCampos = target.getDeclaredFields();
 
         return targetClass;
 
