@@ -2,6 +2,7 @@ package com.danilo.projetos;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 public class Transformator {
 
@@ -18,7 +19,26 @@ public class Transformator {
         Field[] sourceCampos = source.getDeclaredFields();
         Field[] targetCampos = target.getDeclaredFields();
 
+        //Transforma o array de campos em um array
+        Arrays.stream(sourceCampos).forEach(sourceField ->
+                Arrays.stream(targetCampos).forEach(targetField -> {
+                    validar(sourceField, targetField);
+                    try {
+                        targetField.set(targetClass, sourceField.get(input));
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
+
         return targetClass;
 
+    }
+
+    private void validar(Field sourceField, Field targetField) {
+        if (sourceField.getName().equals(targetField.getName()) &&
+        sourceField.getType().equals(targetField.getType())) {
+            sourceField.setAccessible(true);
+            targetField.setAccessible(true);
+        }
     }
 }
